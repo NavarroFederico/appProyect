@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "70865802257",
+    "project_id": "apptinkunakama",
+    "storage_bucket": "apptinkunakama.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70865802257:android:bc76dbff9006891d394db0",
+        "android_client_info": {
+          "package_name": "com.example.apptinkunakama"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70865802257-mqumca6g2oabblaeahks59pmuj6qspi4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDulxIpcAAmvdMGwN_ZPPKJovMicJL6-yA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70865802257-mqumca6g2oabblaeahks59pmuj6qspi4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
