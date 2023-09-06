@@ -72,3 +72,8 @@ fun OrderScreen(){
         }
     )
 }
+
+@Composable
+fun OrderPagerScreen(content: () -> Unit) {
+
+}
