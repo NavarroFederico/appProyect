@@ -1,6 +1,5 @@
 package com.example.apptinkunakama
 
-import android.graphics.Paint.Style
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
@@ -16,7 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 fun Foods() {
     Column(
         modifier = Modifier
-            .fillMaxWidth().wrapContentSize(Alignment.Center)
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.Center)
     ) {
         Text(
             "Foods",
@@ -26,14 +26,16 @@ fun Foods() {
 
 
 }
+
 @Preview(showSystemUi = true)
 @Composable
 fun Drinks() {
     Column(
         modifier = Modifier
-            .fillMaxWidth().wrapContentSize(Alignment.Center),
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.Center),
 
-    ) {
+        ) {
         Text(
             "Drinks",
             style = MaterialTheme.typography.headlineLarge,
