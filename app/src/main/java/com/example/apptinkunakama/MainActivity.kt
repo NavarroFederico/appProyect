@@ -3,8 +3,10 @@ package com.example.apptinkunakama
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,12 +38,20 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
+
                 ) {
 
                 TabMain()
+                    Column {
+                        Greeting("Android")
+                        BotonCrash()
+                    }
+
+
                 }
             }
         }
+
     }
 }
 
@@ -51,6 +61,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier
     )
+
 }
 
 @Preview(showBackground = true)
@@ -59,4 +70,14 @@ fun GreetingPreview() {
     AppTinkunakamaTheme {
         Greeting("Android")
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BotonCrash() {
+
+    Button(onClick = { throw RuntimeException("Test Crash") }) {
+        Text(text = "Throw Exception")
+    }
+
 }
