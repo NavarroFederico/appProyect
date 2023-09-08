@@ -20,8 +20,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
 
                 ) {
-
-                    OrderScreen()
+                   OrderScreen()
+                    // TabMain()
                 }
             }
         }

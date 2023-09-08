@@ -1,6 +1,7 @@
 package com.example.apptinkunakama
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun Foods() {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
@@ -32,7 +33,7 @@ fun Foods() {
 fun Drinks() {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .wrapContentSize(Alignment.Center),
 
         ) {
