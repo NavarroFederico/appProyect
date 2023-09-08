@@ -2,6 +2,7 @@ package com.example.apptinkunakama
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,8 +13,11 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import kotlinx.coroutines.launch
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -24,7 +28,9 @@ fun TabMain() {
     )
     val pagerState = rememberPagerState()
 
-    Column() {
+    Column(
+
+    ) {
         Tabs(tabs, pagerState)
         Tabs_content(tabs, pagerState)
     }
@@ -73,8 +79,9 @@ fun Tabs(tabs: List<TabsItem>, pagerState: PagerState) {
 @Composable
 fun Tabs_content(tabs: List<TabsItem>, pagerState: PagerState) {
     HorizontalPager(
+        pageCount = tabs.size,
         state = pagerState,
-        pageCount = tabs.size
+        modifier = Modifier.fillMaxSize()
     ) { page ->
         tabs[page].screen()
     }
