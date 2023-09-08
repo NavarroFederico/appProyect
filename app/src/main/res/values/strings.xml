@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AppTinkunakama</string>
-    <string name="foods_title" translation_description= "Title for the 'My garden' screen where the user can see the list of plants that have been added to their garden.""/>
+    <string name="foods_title" translation_description= "Title of the 'Food' screen where the user can see the list of meals that are inside an order by table.">Food</string>
+    <string name="drinks_title" translation_description= "Title of the 'Food' screen where the user can see the list of meals that are inside an order by table.">Drink</string>
 </resources>

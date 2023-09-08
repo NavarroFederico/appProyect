@@ -9,7 +9,7 @@ sealed class TabsItem(
     var title: String,
     var screen: MyFuntion
 ) {
-    object itemFood : TabsItem(R.drawable.baseline_restaurant_24, "FOODS", { Foods() })
+    object itemFood : TabsItem(R.drawable.ic_food_24, "FOODS", { Foods() })
 
-    object itemDrink : TabsItem(R.drawable.baseline_liquor_24, "DRINKS", { Drinks() })
+    object itemDrink : TabsItem(R.drawable.ic_drinks_24, "DRINKS", { Drinks() })
 }
