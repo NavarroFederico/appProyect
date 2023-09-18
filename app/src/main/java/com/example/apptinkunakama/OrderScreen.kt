@@ -4,11 +4,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -25,6 +22,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -34,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 enum class OrdersPage(
@@ -56,37 +53,14 @@ fun OrderScreen(modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        "Tinkunama",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
+            TopAppBarNameApp(scrollBehavior = scrollBehavior)
         },
-        /*content = { innerPadding ->
+        content = { innerPadding ->
+            OrderPagerScreen(
+                pagerState =pagerState,
+                modifier = Modifier.padding(innerPadding))
 
-            LazyColumn(
+            /*LazyColumn(
                 contentPadding = innerPadding,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -100,77 +74,45 @@ fun OrderScreen(modifier: Modifier = Modifier) {
                             .padding(horizontal = 16.dp)
                     )
                 }
-            }
-        }*/
-    ){
-        OrderPagerScreen(
-            pagerState =pagerState,
-            modifier = Modifier.padding(it))
-    }
-}@Preview
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
-@Composable
-fun OrderScreen2(modifier: Modifier = Modifier) {
-    val pagerState = rememberPagerState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+            }*/
+        }
+    ) /*{
 
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        "Tinkunama",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
-        },
-        /*content = { innerPadding ->
-
-            LazyColumn(
-                contentPadding = innerPadding,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val list = (0..75).map { it.toString() }
-                items(count = list.size) {
-                    Text(
-                        text = list[it],
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    )
-                }
-            }
-        }*/
-    ){
-        OrderPagerScreen(
-            pagerState =pagerState,
-            modifier = Modifier.padding(it))
-    }
+    }*/
 }
-
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopAppBarNameApp(
+    scrollBehavior: TopAppBarScrollBehavior
+){
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                "Tinkunama",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.displaySmall
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = { /* doSomething() */ }) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Localized description"
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* doSomething() */ }) {
+                Icon(
+                    imageVector = Icons.Filled.AccountCircle,
+                    contentDescription = "Localized description"
+                )
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OrderPagerScreen(
@@ -182,14 +124,15 @@ fun OrderPagerScreen(
         val coroutineScope = rememberCoroutineScope()
 
         // Tab Row
-        TabRow(selectedTabIndex = pagerState.currentPage
+        TabRow(
+            selectedTabIndex = pagerState.currentPage
         ) {
-            pages.forEachIndexed { index,page ->
-                val title = stringResource (id = page.titleResId)
-                Tab (
-                    selected = pagerState.currentPage == index ,
+            pages.forEachIndexed { index, page ->
+                val title = stringResource(id = page.titleResId)
+                Tab(
+                    selected = pagerState.currentPage == index,
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                    text = { Text(text = title)},
+                    text = { Text(text = title) },
                     icon = {
                         Icon(
                             painter = painterResource(id = page.drawableResId),
@@ -209,12 +152,13 @@ fun OrderPagerScreen(
             state = pagerState,
             verticalAlignment = Alignment.Top
 
-        ){index ->
+        ) { index ->
             when (pages[index]) {
-                OrdersPage.FOODS->{
+                OrdersPage.FOODS -> {
                     Foods()
                 }
-                OrdersPage.DRINKS->{
+
+                OrdersPage.DRINKS -> {
                     Drinks()
                 }
             }
