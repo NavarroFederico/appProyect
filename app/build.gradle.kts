@@ -39,6 +39,8 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        allWarningsAsErrors = false
+        freeCompilerArgs += "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     }
     buildFeatures {
         compose = true
@@ -64,10 +66,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation ("androidx.compose.foundation:foundation")
-    implementation ("androidx.navigation:navigation-compose:2.7.2")
+    implementation ("androidx.navigation:navigation-compose:2.5.2")
 
     implementation ("io.coil-kt:coil-compose:2.4.0")
-
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
