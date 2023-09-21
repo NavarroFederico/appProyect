@@ -65,10 +65,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation ("androidx.compose.foundation:foundation")
-    implementation ("androidx.navigation:navigation-compose:2.5.2")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.navigation:navigation-compose:2.5.2")
 
-    implementation ("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -83,7 +83,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-perf-ktx")
-    implementation ("com.google.firebase:firebase-crashlytics-ktx")
-    implementation ("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
 
 }

@@ -1,6 +1,6 @@
 package com.example.apptinkunakama.ui.screens.login
 
-import androidx.compose.ui.text.font.FontFamily
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,25 +23,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.apptinkunakama.ui.navigation.TrackScreen
 import com.example.apptinkunakama.ui.theme.Purple40
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(navigateToMenu: () -> Unit) {
+fun Login(analytics: FirebaseAnalytics, navigateToMenu: () -> Unit) {
+    TrackScreen(name = "Ingreso a LoginScreen", analytics = analytics)
+
     Box(modifier = Modifier.fillMaxSize()) {
         ClickableText(
             text = AnnotatedString("¿No tienes una cuenta? Regístrate"),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(50.dp),
-            onClick = {},
+            onClick = {
+                //enviamos un registro ligada a la accion de tocar el evento
+                analytics.logEvent("configuracion") {
+                    param("valor1", "no tiene cuenta")
+                    param("valor2", "registro de nuevo usuario")
+                }
+                Log.d("debug", "event configuracion")
+            },
             style = TextStyle(
                 fontSize = 14.sp,
                 fontFamily = FontFamily.Default,
@@ -95,7 +107,13 @@ fun Login(navigateToMenu: () -> Unit) {
         Spacer(modifier = Modifier.height(40.dp))
         ClickableText(
             text = AnnotatedString("¿Olvidaste tu contraseña?"),
-            onClick = {},
+            onClick = {
+                //enviamos un registro ligada a la accion de tocar el evento
+                analytics.logEvent("usuario_error") {
+                    param("valor1", "olvido contraseña")
+                }
+                Log.d("debug", "event usuario_error")
+            },
             style = TextStyle(
                 fontSize = 14.sp,
                 fontFamily = FontFamily.Default,
@@ -105,9 +123,4 @@ fun Login(navigateToMenu: () -> Unit) {
         )
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-@Preview
-fun LoginPreview() {
-    Login(navigateToMenu = {})
-}
+

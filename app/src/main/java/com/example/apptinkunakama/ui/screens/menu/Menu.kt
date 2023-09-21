@@ -8,9 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import com.example.apptinkunakama.ui.navigation.TrackScreen
+import com.google.firebase.analytics.FirebaseAnalytics
 
 @Composable
-fun MenuScreen() {
+fun MenuScreen(analytics: FirebaseAnalytics) {
+    TrackScreen(name = "Ingreso a MenuScreen", analytics = analytics)
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
