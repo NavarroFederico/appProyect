@@ -69,6 +69,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.5.2")
 
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.google.firebase:firebase-auth-ktx:22.1.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

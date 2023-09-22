@@ -1,5 +1,6 @@
 package com.example.apptinkunakama.ui.screens.auth
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -28,10 +29,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -46,14 +49,20 @@ import com.example.apptinkunakama.R
 import com.example.apptinkunakama.ui.navigation.Routes
 import com.example.apptinkunakama.ui.theme.Purple40
 import com.example.apptinkunakama.utils.AnalyticsManager
+import com.example.apptinkunakama.utils.AuthManager
+import com.example.apptinkunakama.utils.AuthRes
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(analytics: AnalyticsManager, navigation: NavController) {
+fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavController) {
     analytics.LogScreenView(screenName = Routes.Login.route)
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
         ClickableText(
@@ -88,7 +97,8 @@ fun LoginScreen(analytics: AnalyticsManager, navigation: NavController) {
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Firebase Android",
-            style = TextStyle(fontSize = 30.sp))
+            style = TextStyle(fontSize = 30.sp)
+        )
         Spacer(modifier = Modifier.height(30.dp))
         TextField(
             label = { Text(text = "Correo electrónico") },
@@ -137,6 +147,9 @@ fun LoginScreen(analytics: AnalyticsManager, navigation: NavController) {
         Spacer(modifier = Modifier.height(25.dp))
         SocialMediaButton(
             onClick = {
+                scope.launch {
+                    incognitosSignIn(auth, analytics, context, navigation)
+                }
 
             },
             text = "Continuar como invitado",
@@ -154,18 +167,48 @@ fun LoginScreen(analytics: AnalyticsManager, navigation: NavController) {
         )
     }
 }
+
+suspend fun incognitosSignIn(
+    auth: AuthManager,
+    analytics: AnalyticsManager,
+    context: Context,
+    navigation: NavController
+) {
+    when (val result = auth.signInAnonymously()) {
+        is AuthRes.Success -> {
+            analytics.logButtonClicked("Click: Continuar como invitado")
+            navigation.navigate(Routes.Home.route) {
+                popUpTo(Routes.Login.route) {
+                    inclusive = true
+                }
+            }
+        }
+        is AuthRes.Error -> {
+            analytics.logError("Error SignIn Incognito: ${result.errorMessage}")
+        }
+
+    }
+}
+
 @Composable
-fun SocialMediaButton(onClick: () -> Unit, text: String, icon: Int, color: Color, ) {
+fun SocialMediaButton(onClick: () -> Unit, text: String, icon: Int, color: Color) {
     var click by remember { mutableStateOf(false) }
     Surface(
         onClick = onClick,
-        modifier = Modifier.padding(start = 40.dp, end = 40.dp).clickable { click = !click },
+        modifier = Modifier
+            .padding(start = 40.dp, end = 40.dp)
+            .clickable { click = !click },
         shape = RoundedCornerShape(50),
-        border = BorderStroke(width = 1.dp, color = if(icon == R.drawable.ic_incognito) color else Color.Gray),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (icon == R.drawable.ic_incognito) color else Color.Gray
+        ),
         color = color
     ) {
         Row(
-            modifier = Modifier.padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 12.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -176,7 +219,10 @@ fun SocialMediaButton(onClick: () -> Unit, text: String, icon: Int, color: Color
                 tint = Color.Unspecified
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "$text", color = if(icon == R.drawable.ic_incognito) Color.White else Color.Black)
+            Text(
+                text = "$text",
+                color = if (icon == R.drawable.ic_incognito) Color.White else Color.Black
+            )
             click = true
         }
     }

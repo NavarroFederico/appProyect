@@ -45,19 +45,25 @@ import com.example.apptinkunakama.ui.navigation.Routes
 import com.example.apptinkunakama.ui.screens.login.ContactsScreen
 import com.example.apptinkunakama.ui.screens.login.NotesScreen
 import com.example.apptinkunakama.utils.AnalyticsManager
+import com.example.apptinkunakama.utils.AuthManager
 
 @Composable
-fun HomeScreen(analytics: AnalyticsManager, navigation: NavController) {
+fun HomeScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavController) {
     analytics.LogScreenView(screenName = Routes.Home.route)
     val navController = rememberNavController()
 
     var showDialog by remember { mutableStateOf(false) }
 
     val onLogoutConfirmed: () -> Unit = {
-
+        auth.signOut()
+        navigation.navigate(Routes.Login.route){
+            popUpTo(Routes.Home.route){
+                inclusive= true
+            }
+        }
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -79,7 +85,8 @@ fun HomeScreen(analytics: AnalyticsManager, navigation: NavController) {
                                 text = "Usuario",
                                 fontSize = 12.sp,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis)
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
                 },
@@ -98,7 +105,7 @@ fun HomeScreen(analytics: AnalyticsManager, navigation: NavController) {
         bottomBar = {
             BottomBar(navController = navController)
         }
-    ){ contentPadding ->
+    ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             if (showDialog) {
                 LogoutDialog(onConfirmLogout = {
@@ -156,7 +163,11 @@ fun BottomBar(navController: NavHostController) {
 }
 
 @Composable
-fun RowScope.AddItem(screens: BottomNavScreen, currentDestination: NavDestination, navController: NavHostController) {
+fun RowScope.AddItem(
+    screens: BottomNavScreen,
+    currentDestination: NavDestination,
+    navController: NavHostController
+) {
     NavigationBarItem(
         label = { Text(text = screens.title) },
         icon = { Icon(imageVector = screens.icon, contentDescription = "Icons") },
@@ -190,6 +201,7 @@ sealed class BottomNavScreen(val route: String, val title: String, val icon: Ima
         title = "Contactos",
         icon = Icons.Default.Person
     )
+
     object Note : BottomNavScreen(
         route = "notes",
         title = "Notas",
