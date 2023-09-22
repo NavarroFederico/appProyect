@@ -8,12 +8,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.example.apptinkunakama.ui.navigation.TrackScreen
-import com.google.firebase.analytics.FirebaseAnalytics
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.apptinkunakama.ui.navigation.Routes
+import com.example.apptinkunakama.utils.AnalyticsManager
 
 @Composable
-fun MenuScreen(analytics: FirebaseAnalytics) {
-    TrackScreen(name = "Ingreso a MenuScreen", analytics = analytics)
+fun MenuScreen(analytics: AnalyticsManager, navigation: NavController) {
+
+    analytics.LogScreenView(screenName = Routes.Menu.route)
+
+    val navigation = rememberNavController()
 
     Column(
         modifier = Modifier.fillMaxSize(),
