@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -67,35 +69,20 @@ fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavC
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        ClickableText(
-            text = AnnotatedString("¿No tienes una cuenta? Regístrate"),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(40.dp),
-            onClick = {
-                navigation.navigate(Routes.SignUp.route)
-                //enviamos un registro ligada a la accion de tocar el evento
-                analytics.logButtonClicked("Click: No tienes una cuenta? Regístrate")
-                Log.d("debug", "event configuracion")
-            },
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = FontFamily.Default,
-                textDecoration = TextDecoration.Underline,
-                color = Purple40
-            )
-        )
-    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_firebase),
             contentDescription = "Firebase",
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier
+                .padding(top = 30.dp)
+                .size(100.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
@@ -171,6 +158,28 @@ fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavC
             icon = R.drawable.ic_google,
             color = Color(0xFFF1F1F1)
         )
+        Spacer(modifier = Modifier.height(15.dp))
+        Box(modifier= Modifier.fillMaxWidth()) {
+        ClickableText(
+            text = AnnotatedString("¿No tienes una cuenta? Regístrate"),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(40.dp),
+            onClick = {
+                navigation.navigate(Routes.SignUp.route)
+                //enviamos un registro ligada a la accion de tocar el evento
+                analytics.logButtonClicked("Click: No tienes una cuenta? Regístrate")
+                Log.d("debug", "event configuracion")
+            },
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontFamily = FontFamily.Default,
+                textDecoration = TextDecoration.Underline,
+                color = Purple40
+            )
+        )
+        }
+
     }
 }
 
@@ -255,7 +264,7 @@ fun SocialMediaButton(onClick: () -> Unit, text: String, icon: Int, color: Color
     }
 }
 
-@Preview
+@Preview(device = "id:Nexus 5", apiLevel = 30)
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(analytics = AnalyticsManager(LocalContext.current), auth = AuthManager() , navigation = NavHostController(

@@ -55,4 +55,9 @@ class AuthManager {
             AuthRes.Error(e.message ?: "Error al restablecer la contraseña")
         }
     }
+    suspend fun validateEmailExistsInFirebase(email: String): Boolean {
+        val firebaseUser = auth.
+        return true
+    }
+
 }

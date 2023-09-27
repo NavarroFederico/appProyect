@@ -58,6 +58,7 @@ fun Navigation(
             composable(Routes.ForgotPassword.route) {
                 ForgotPasswordScreen(
                     analytics = analytics,
+                    auth = authManager,
                     navigation = navController
                 )
             }

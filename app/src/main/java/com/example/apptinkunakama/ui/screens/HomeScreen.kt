@@ -1,5 +1,6 @@
 package com.example.apptinkunakama.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
@@ -29,8 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -41,6 +48,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.apptinkunakama.R
 import com.example.apptinkunakama.ui.navigation.Routes
 import com.example.apptinkunakama.ui.screens.login.ContactsScreen
 import com.example.apptinkunakama.ui.screens.login.NotesScreen
@@ -51,6 +59,7 @@ import com.example.apptinkunakama.utils.AuthManager
 fun HomeScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavController) {
     analytics.LogScreenView(screenName = Routes.Home.route)
     val navController = rememberNavController()
+    val user = auth.getCurrentUser()
 
     var showDialog by remember { mutableStateOf(false) }
 
@@ -72,17 +81,28 @@ fun HomeScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavCo
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
+                        if(user?.photoUrl !=null){
 
+                        }else{
+                            Image(
+                                painter= painterResource(id = R.drawable.profile),
+                                contentDescription = "Foto de perfil por defecto",
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "Bienvenidx",
+                                text = if(!user?.displayName.isNullOrEmpty()) "Hola ${user?.displayName}" else "Bienvenidx",
                                 fontSize = 20.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = "Usuario",
+                                text = if (!user?.email.isNullOrEmpty())"${user?.email}" else "Anónimo",
                                 fontSize = 12.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -207,4 +227,11 @@ sealed class BottomNavScreen(val route: String, val title: String, val icon: Ima
         title = "Notas",
         icon = Icons.Default.List
     )
+}
+
+@Preview(device = "id:Nexus 5", apiLevel = 30)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(analytics = AnalyticsManager(LocalContext.current), auth = AuthManager() , navigation = NavHostController(
+        LocalContext.current))
 }

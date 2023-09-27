@@ -120,7 +120,7 @@ suspend fun signUp(
     context: Context,
     navigation: NavController
 ) {
-    if (email.isNotEmpty() && password.isEmpty()) {
+    if (email.isNotEmpty() && password.isNotEmpty()) {
         when (val result = auth.createUserWithEmailAndPassword(email, password)) {
             is AuthRes.Success -> {
                 analytics.logButtonClicked(FirebaseAnalytics.Event.SIGN_UP)

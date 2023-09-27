@@ -1,5 +1,7 @@
 package com.example.apptinkunakama.ui.screens.auth
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,9 +33,16 @@ import androidx.navigation.NavHostController
 import com.example.apptinkunakama.ui.navigation.Routes
 import com.example.apptinkunakama.ui.theme.Purple40
 import com.example.apptinkunakama.utils.AnalyticsManager
+import com.example.apptinkunakama.utils.AuthManager
+import com.example.apptinkunakama.utils.AuthRes
+import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotPasswordScreen(analytics: AnalyticsManager, navigation: NavHostController) {
+fun ForgotPasswordScreen(
+    analytics: AnalyticsManager,
+    auth: AuthManager,
+    navigation: NavHostController
+) {
 
     analytics.LogScreenView(screenName = Routes.ForgotPassword.route)
 
@@ -43,9 +52,9 @@ fun ForgotPasswordScreen(analytics: AnalyticsManager, navigation: NavHostControl
     val scope = rememberCoroutineScope()
 
     Column(
-    modifier = Modifier.fillMaxSize(),
-    verticalArrangement = Arrangement.Top,
-    horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Olvidó su contraseña",
@@ -62,7 +71,9 @@ fun ForgotPasswordScreen(analytics: AnalyticsManager, navigation: NavHostControl
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = {
-
+                    scope.launch {
+                        resetPassword(email, analytics, auth, navigation, context)
+                    }
                 },
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
@@ -75,10 +86,40 @@ fun ForgotPasswordScreen(analytics: AnalyticsManager, navigation: NavHostControl
     }
 }
 
-@Preview
+suspend fun resetPassword(
+    email: String,
+    analytics: AnalyticsManager,
+    auth: AuthManager,
+    navigation: NavHostController,
+    context: Context
+) {
+
+if (email.isNotEmpty())
+    when (val res = auth.resetPassword(email)) {
+        is AuthRes.Success -> {
+            analytics.logButtonClicked(buttonName = "Reset password $email")
+            Toast.makeText(context, "Correo enviado", Toast.LENGTH_SHORT).show()
+            navigation.navigate(Routes.Login.route)
+        }
+        is AuthRes.Error -> {
+            analytics.logButtonClicked(buttonName = "Reset password error $email : ${res.errorMessage}")
+            Toast.makeText(context, "Error al enviar el correo", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Toast.makeText(context, "Ingresa una dirección de correo electronico", Toast.LENGTH_SHORT).show()
+    }
+
+}
+
+@Preview(device = "id:Nexus 5", apiLevel = 33, backgroundColor = 0xFFF44336)
 @Composable
 fun ForgotPasswordScreenPreview() {
-    ForgotPasswordScreen(analytics = AnalyticsManager(LocalContext.current), navigation = NavHostController(
-        LocalContext.current) )
+    ForgotPasswordScreen(
+        analytics = AnalyticsManager(LocalContext.current),
+        auth = AuthManager(),
+        navigation = NavHostController(
+            LocalContext.current
+        )
+    )
 
 }
