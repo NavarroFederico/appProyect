@@ -2,6 +2,7 @@ package com.example.apptinkunakama.ui.screens.auth
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -42,9 +43,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.apptinkunakama.R
 import com.example.apptinkunakama.ui.navigation.Routes
 import com.example.apptinkunakama.ui.theme.Purple40
@@ -116,6 +119,9 @@ fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavC
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = {
+                          scope.launch {
+                              emailPassSignIn(email,password, auth, analytics, context, navigation)
+                          }
 
                 },
                 shape = RoundedCornerShape(50.dp),
@@ -165,6 +171,27 @@ fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavC
             icon = R.drawable.ic_google,
             color = Color(0xFFF1F1F1)
         )
+    }
+}
+
+suspend fun emailPassSignIn(email: String, password: String, auth: AuthManager, analytics: AnalyticsManager, context: Context, navigation: NavController) {
+    if(email.isNotEmpty() && password.isNotEmpty()){
+    when (val result = auth.signInWithEmailAndPassword(email,password)) {
+        is AuthRes.Success -> {
+            analytics.logButtonClicked("Click: Iniciar sesión correo & contraseña")
+            navigation.navigate(Routes.Home.route){
+                popUpTo(Routes.Login.route){
+                    inclusive = true
+                }
+            }
+        }
+        is AuthRes.Error -> {
+            analytics.logButtonClicked("Error SignIn: ${result.errorMessage}")
+            Toast.makeText(context, "Error SignIn:  ${result.errorMessage}", Toast.LENGTH_SHORT).show()
+        }
+    }
+    }else{
+        Toast.makeText(context, "Existen campos vacíos", Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -228,3 +255,9 @@ fun SocialMediaButton(onClick: () -> Unit, text: String, icon: Int, color: Color
     }
 }
 
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(analytics = AnalyticsManager(LocalContext.current), auth = AuthManager() , navigation = NavHostController(
+        LocalContext.current))
+}

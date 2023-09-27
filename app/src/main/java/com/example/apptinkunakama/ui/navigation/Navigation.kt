@@ -51,6 +51,7 @@ fun Navigation(
             composable(Routes.SignUp.route) {
                 SignUpScreen(
                     analytics = analytics,
+                    auth = authManager,
                     navigation = navController
                 )
             }
