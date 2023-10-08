@@ -2,7 +2,6 @@ package com.example.apptinkunakama.ui.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,8 +14,6 @@ import com.example.apptinkunakama.ui.screens.auth.SignUpScreen
 import com.example.apptinkunakama.ui.screens.menu.MenuScreen
 import com.example.apptinkunakama.utils.AnalyticsManager
 import com.example.apptinkunakama.utils.AuthManager
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseUser
 
 @Composable
@@ -25,7 +22,7 @@ fun Navigation(
     navController: NavHostController = rememberNavController()
 ) {
     var analytics: AnalyticsManager = AnalyticsManager(context)
-    val authManager: AuthManager = AuthManager()
+    val authManager: AuthManager = AuthManager(context)
 
     val user: FirebaseUser? = authManager.getCurrentUser()
 

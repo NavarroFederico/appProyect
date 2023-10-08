@@ -80,10 +80,14 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 
-
+    //firebase
     implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-perf-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.firebase:firebase-database-ktx")
+
+
 
 }

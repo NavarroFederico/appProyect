@@ -3,6 +3,8 @@ package com.example.apptinkunakama.ui.screens.auth
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -56,6 +58,8 @@ import com.example.apptinkunakama.ui.theme.Purple40
 import com.example.apptinkunakama.utils.AnalyticsManager
 import com.example.apptinkunakama.utils.AuthManager
 import com.example.apptinkunakama.utils.AuthRes
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,6 +73,38 @@ fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavC
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        when (val account =
+            auth.handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(result.data))) {
+            is AuthRes.Success -> {
+                val credential = GoogleAuthProvider.getCredential(account?.data?.idToken, null)
+                scope.launch {
+                    val fireUser = auth.signInWithGoogleCredential(credential)
+                    if (fireUser != null) {
+                        Toast.makeText(context, "Bienvenidx", Toast.LENGTH_SHORT).show()
+                        navigation.navigate(Routes.Home.route) {
+                            popUpTo(Routes.Login.route) {
+                                inclusive = true
+
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            is AuthRes.Error -> {
+                analytics.logError("Error SignIn: ${account.errorMessage}")
+                Toast.makeText(context, "Error: ${account.errorMessage}", Toast.LENGTH_SHORT).show()
+            }
+
+            else -> {
+                Toast.makeText(context, "Error desconocido", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -106,9 +142,9 @@ fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavC
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = {
-                          scope.launch {
-                              emailPassSignIn(email,password, auth, analytics, context, navigation)
-                          }
+                    scope.launch {
+                        emailPassSignIn(email, password, auth, analytics, context, navigation)
+                    }
 
                 },
                 shape = RoundedCornerShape(50.dp),
@@ -152,54 +188,63 @@ fun LoginScreen(analytics: AnalyticsManager, auth: AuthManager, navigation: NavC
         Spacer(modifier = Modifier.height(15.dp))
         SocialMediaButton(
             onClick = {
-
+                      auth.signInWithGoogle(googleSignInLauncher)
             },
             text = "Continuar con Google",
             icon = R.drawable.ic_google,
             color = Color(0xFFF1F1F1)
         )
         Spacer(modifier = Modifier.height(15.dp))
-        Box(modifier= Modifier.fillMaxWidth()) {
-        ClickableText(
-            text = AnnotatedString("¿No tienes una cuenta? Regístrate"),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(40.dp),
-            onClick = {
-                navigation.navigate(Routes.SignUp.route)
-                //enviamos un registro ligada a la accion de tocar el evento
-                analytics.logButtonClicked("Click: No tienes una cuenta? Regístrate")
-                Log.d("debug", "event configuracion")
-            },
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = FontFamily.Default,
-                textDecoration = TextDecoration.Underline,
-                color = Purple40
+        Box(modifier = Modifier.fillMaxWidth()) {
+            ClickableText(
+                text = AnnotatedString("¿No tienes una cuenta? Regístrate"),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(40.dp),
+                onClick = {
+                    navigation.navigate(Routes.SignUp.route)
+                    //enviamos un registro ligada a la accion de tocar el evento
+                    analytics.logButtonClicked("Click: No tienes una cuenta? Regístrate")
+                    Log.d("debug", "event configuracion")
+                },
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontFamily = FontFamily.Default,
+                    textDecoration = TextDecoration.Underline,
+                    color = Purple40
+                )
             )
-        )
         }
 
     }
 }
 
-suspend fun emailPassSignIn(email: String, password: String, auth: AuthManager, analytics: AnalyticsManager, context: Context, navigation: NavController) {
-    if(email.isNotEmpty() && password.isNotEmpty()){
-    when (val result = auth.signInWithEmailAndPassword(email,password)) {
-        is AuthRes.Success -> {
-            analytics.logButtonClicked("Click: Iniciar sesión correo & contraseña")
-            navigation.navigate(Routes.Home.route){
-                popUpTo(Routes.Login.route){
-                    inclusive = true
+suspend fun emailPassSignIn(
+    email: String,
+    password: String,
+    auth: AuthManager,
+    analytics: AnalyticsManager,
+    context: Context,
+    navigation: NavController
+) {
+    if (email.isNotEmpty() && password.isNotEmpty()) {
+        when (val result = auth.signInWithEmailAndPassword(email, password)) {
+            is AuthRes.Success -> {
+                analytics.logButtonClicked("Click: Iniciar sesión correo & contraseña")
+                navigation.navigate(Routes.Home.route) {
+                    popUpTo(Routes.Login.route) {
+                        inclusive = true
+                    }
                 }
             }
+
+            is AuthRes.Error -> {
+                analytics.logButtonClicked("Error SignIn: ${result.errorMessage}")
+                Toast.makeText(context, "Error SignIn:  ${result.errorMessage}", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
-        is AuthRes.Error -> {
-            analytics.logButtonClicked("Error SignIn: ${result.errorMessage}")
-            Toast.makeText(context, "Error SignIn:  ${result.errorMessage}", Toast.LENGTH_SHORT).show()
-        }
-    }
-    }else{
+    } else {
         Toast.makeText(context, "Existen campos vacíos", Toast.LENGTH_SHORT).show()
     }
 }
@@ -219,6 +264,7 @@ suspend fun incognitosSignIn(
                 }
             }
         }
+
         is AuthRes.Error -> {
             analytics.logError("Error SignIn Incognito: ${result.errorMessage}")
         }
@@ -256,7 +302,7 @@ fun SocialMediaButton(onClick: () -> Unit, text: String, icon: Int, color: Color
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "$text",
+                text = text,
                 color = if (icon == R.drawable.ic_incognito) Color.White else Color.Black
             )
             click = true
@@ -267,6 +313,11 @@ fun SocialMediaButton(onClick: () -> Unit, text: String, icon: Int, color: Color
 @Preview(device = "id:Nexus 5", apiLevel = 30)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(analytics = AnalyticsManager(LocalContext.current), auth = AuthManager() , navigation = NavHostController(
-        LocalContext.current))
+    LoginScreen(
+        analytics = AnalyticsManager(LocalContext.current),
+        auth = AuthManager(LocalContext.current),
+        navigation = NavHostController(
+            LocalContext.current
+        )
+    )
 }
